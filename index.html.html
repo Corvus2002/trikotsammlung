@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marvins Trikotsammlung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d12;
+    --bg-2:#0e1118;
+    --surface:#14171f;
+    --surface-2:#1b1f2b;
+    --line:#262b38;
+    --line-2:#333a4b;
+    --text:#f2f4f8;
+    --muted:#9aa3b8;
+    --faint:#626c84;
+    --gold:#ffc23d;        /* hero accent — trophy/classic kit */
+    --gold-dim:#b8851f;
+    --blue:#5b8cff;        /* interactive / focus */
+    --radius:16px;
+    --shadow:0 24px 60px -28px rgba(0,0,0,.85);
+    --mono:"Space Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 520px at 80% -8%, rgba(255,194,61,.10), transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, rgba(91,140,255,.07), transparent 55%),
+      var(--bg);
+    color:var(--text);
+    font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;
+  }
+  .wrap{max-width:1200px;margin:0 auto;padding:0 22px 96px}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold)}
+
+  /* ---------- Header / hero ---------- */
+  header.topbar{position:relative;padding:40px 0 26px;margin-bottom:26px;overflow:hidden}
+  header.topbar::before{ /* mown-pitch stripes signature */
+    content:"";position:absolute;inset:-40px -200px auto -200px;height:280px;z-index:0;
+    background:repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 64px, transparent 64px 128px);
+    -webkit-mask-image:linear-gradient(180deg,#000,transparent);mask-image:linear-gradient(180deg,#000,transparent);
+    pointer-events:none;
+  }
+  header.topbar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,var(--gold),transparent 40%);opacity:.5}
+  .topbar > *{position:relative;z-index:1}
+  .brand{display:flex;align-items:center;gap:18px;margin-bottom:24px}
+  .crest{
+    width:60px;height:60px;flex:none;border-radius:16px;
+    background:linear-gradient(150deg,#ffd873,var(--gold) 45%,var(--gold-dim));
+    display:grid;place-items:center;box-shadow:0 10px 28px -8px rgba(255,194,61,.5);transform:rotate(-3deg);
+  }
+  .crest svg{width:34px;height:34px}
+  h1{
+    font-family:"Anton",sans-serif;font-weight:400;letter-spacing:.5px;
+    font-size:clamp(32px,6vw,58px);line-height:.92;margin:4px 0 0;text-transform:uppercase;
+  }
+  h1 span{color:var(--gold)}
+  .tagline{color:var(--muted);font-size:13.5px;margin-top:7px}
+
+  .summary{display:flex;gap:0;flex-wrap:wrap;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:linear-gradient(180deg,var(--surface),var(--bg-2));width:fit-content}
+  .stat{padding:14px 26px 12px;text-align:left;border-right:1px solid var(--line);min-width:96px}
+  .stat:last-child{border-right:none}
+  .stat b{font-family:"Anton",sans-serif;font-weight:400;font-size:34px;display:block;line-height:.9;color:var(--text)}
+  .stat:first-child b{color:var(--gold)}
+  .stat small{font-family:var(--mono);color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:1.5px}
+
+  /* ---------- Controls ---------- */
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:18px;
+    position:sticky;top:0;z-index:20;padding:14px 0;
+    background:linear-gradient(180deg,var(--bg) 70%,transparent)}
+  .search{position:relative;flex:1 1 240px;min-width:200px}
+  .search input{width:100%;background:var(--surface);border:1px solid var(--line);color:var(--text);
+    border-radius:11px;padding:12px 12px 12px 40px;font-size:14px;font-family:inherit}
+  .search input::placeholder{color:var(--faint)}
+  .search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;opacity:.55}
+  select,.btn{background:var(--surface);border:1px solid var(--line);color:var(--text);
+    border-radius:11px;padding:11px 15px;font-size:14px;font-family:inherit;cursor:pointer;transition:.16s}
+  select:hover,.btn:hover{border-color:var(--line-2)}
+  select:focus,input:focus,.btn:focus-visible,textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#241a02;font-weight:700}
+  .btn.primary:hover{background:#ffce5e;border-color:#ffce5e}
+  .btn.ghost{background:transparent}
+  .spacer{flex:1 1 auto}
+
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+  .chip{background:var(--surface);border:1px solid var(--line);color:var(--muted);
+    border-radius:999px;padding:7px 15px;font-size:13px;cursor:pointer;font-weight:500;transition:.15s;
+    font-family:var(--mono);letter-spacing:.3px}
+  .chip:hover{color:var(--text);border-color:var(--line-2)}
+  .chip.active{background:var(--gold);color:#241a02;border-color:var(--gold);font-weight:700}
+
+  .count-line{font-family:var(--mono);color:var(--faint);font-size:12px;letter-spacing:1px;text-transform:uppercase;margin:0 0 16px}
+
+  /* ---------- Grid / cards ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:18px}
+  .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;cursor:pointer;transition:transform .18s,border-color .18s,box-shadow .18s;display:flex;flex-direction:column}
+  .card::after{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:var(--gold);transform:scaleX(0);transform-origin:left;transition:transform .22s}
+  .card:hover{transform:translateY(-5px);border-color:var(--line-2);box-shadow:var(--shadow)}
+  .card:hover::after{transform:scaleX(1)}
+  .card .visual{position:relative;aspect-ratio:4/5;
+    background:radial-gradient(120% 100% at 50% 0%,rgba(255,194,61,.05),transparent),linear-gradient(180deg,#1a1e29,#10131b);
+    background-color:#10131b;display:grid;place-items:center;overflow:hidden}
+  .card .visual img{width:100%;height:100%;object-fit:cover;transition:transform .35s}
+  .card:hover .visual img{transform:scale(1.04)}
+  .card .visual svg.kit{width:72%;height:72%}
+  .typebadge{position:absolute;top:11px;left:11px;font-family:var(--mono);font-size:9.5px;font-weight:700;
+    letter-spacing:1px;text-transform:uppercase;padding:5px 9px;border-radius:7px;
+    background:rgba(11,13,18,.78);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.08)}
+  .card .meta{padding:13px 15px 16px}
+  .card .club{font-weight:700;font-size:15.5px;line-height:1.2;margin:0 0 4px}
+  .card .sub{font-family:var(--mono);color:var(--muted);font-size:11.5px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;letter-spacing:.3px}
+  .card .brandtag{color:var(--faint);font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;margin-top:8px;font-family:var(--mono)}
+
+  /* type accent colours */
+  .t-Heim{color:#ffc23d} .t-Auswärts{color:#5b8cff} .t-Ausweich{color:#37d6c0}
+  .t-Torwart{color:#ff7e45} .t-Special{color:#c98cff}
+
+  /* ---------- Empty ---------- */
+  .empty{text-align:center;padding:74px 20px;border:1px dashed var(--line);border-radius:20px;
+    background:radial-gradient(600px 300px at 50% 0%,rgba(255,194,61,.06),transparent)}
+  .empty h2{font-family:"Anton",sans-serif;font-weight:400;font-size:28px;margin:16px 0 8px;text-transform:uppercase}
+  .empty p{color:var(--muted);margin:0 auto 22px;max-width:430px}
+  .empty .btn{margin:0 6px}
+
+  /* ---------- Modal ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(6,8,13,.74);backdrop-filter:blur(4px);
+    display:none;align-items:flex-start;justify-content:center;padding:38px 16px;z-index:50;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:var(--bg-2);border:1px solid var(--line);border-radius:20px;width:100%;max-width:720px;
+    box-shadow:0 40px 90px -24px rgba(0,0,0,.85);animation:pop .2s ease}
+  .modal.wide{max-width:760px}
+  @keyframes pop{from{transform:translateY(12px) scale(.99);opacity:0}to{transform:none;opacity:1}}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--line)}
+  .modal-head h3{margin:0;font-family:"Anton",sans-serif;font-weight:400;font-size:20px;letter-spacing:.5px;text-transform:uppercase}
+  .close{background:none;border:none;color:var(--muted);font-size:26px;cursor:pointer;line-height:1;padding:4px}
+  .close:hover{color:var(--text)}
+  .modal-body{padding:24px}
+
+  /* find panel */
+  .findpanel{background:linear-gradient(180deg,rgba(255,194,61,.07),var(--surface));border:1px solid var(--gold-dim);border-radius:14px;padding:16px;margin-bottom:18px}
+  .findpanel .findhead{display:flex;align-items:center;gap:10px}
+  .findpanel .findhead strong{font-size:14px}
+  .findpanel em{color:var(--text);font-style:normal;font-weight:600}
+  .find-row{display:flex;gap:8px;flex-wrap:wrap}
+  .db-status{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5;letter-spacing:.2px}
+  .db-status.err{color:#ff7e7e}
+
+  /* form */
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field.full{grid-column:1/-1}
+  label{font-family:var(--mono);font-size:10.5px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .field input,.field select,.field textarea{background:var(--surface);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:10px 12px;font-size:14px;font-family:inherit;width:100%}
+  .field input::placeholder,.field textarea::placeholder{color:var(--faint)}
+  .field textarea{resize:vertical;min-height:64px}
+  .hint{color:var(--faint);font-size:12.5px;line-height:1.5}
+  .form-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap;align-items:center}
+  .photo-drop{border:1px dashed var(--line-2);border-radius:11px;padding:14px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer;transition:.15s}
+  .photo-drop:hover{border-color:var(--gold);color:var(--text)}
+  .photo-thumb{display:flex;align-items:center;gap:12px}
+  .photo-thumb img{width:60px;height:60px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+
+  /* detail */
+  .detail{display:grid;grid-template-columns:260px 1fr;gap:24px}
+  .detail .bigvisual{background:linear-gradient(180deg,#1a1e29,#10131b);border-radius:16px;aspect-ratio:4/5;display:grid;place-items:center;overflow:hidden;border:1px solid var(--line)}
+  .detail .bigvisual img{width:100%;height:100%;object-fit:cover}
+  .detail .bigvisual svg{width:80%;height:80%}
+  .detail dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:11px 18px;align-items:baseline}
+  .detail dt{font-family:var(--mono);color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:1px;font-weight:700}
+  .detail dd{margin:0;font-size:14.5px}
+  .detail .notes{grid-column:1/-1;color:var(--muted);font-size:14px;border-top:1px solid var(--line);padding-top:15px;margin-top:8px;white-space:pre-wrap}
+  .fka-link{display:inline-flex;align-items:center;gap:7px;color:var(--gold);text-decoration:none;font-weight:600;font-size:14px}
+  .fka-link:hover{text-decoration:underline}
+  .detail-actions{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+  .btn.danger{color:#ff7e7e;border-color:transparent;background:transparent}
+  .btn.danger:hover{border-color:#ff7e7e}
+
+  /* toast */
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--gold);color:#241a02;font-weight:700;padding:12px 22px;border-radius:999px;
+    box-shadow:0 16px 36px -10px rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:.25s;z-index:100;font-size:14px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  .file-hidden{display:none}
+
+  @media (max-width:560px){
+    .form-grid{grid-template-columns:1fr}
+    .detail{grid-template-columns:1fr}
+    .detail .bigvisual{max-width:220px;margin:0 auto}
+    .summary{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand">
+      <div class="crest" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8.5 3v6c0 5-3.6 8.5-8.5 11C7.1 19.5 3.5 16 3.5 11V5L12 2z" stroke="#241a02" stroke-width="1.6" fill="#241a02" fill-opacity=".12"/><path d="M12 2l8.5 3v6c0 5-3.6 8.5-8.5 11C7.1 19.5 3.5 16 3.5 11V5L12 2z" stroke="#241a02" stroke-width="1.4"/><path d="M12 6.4l3.3 2.4-1.25 3.85H9.95L8.7 8.8 12 6.4z" fill="#241a02"/></svg>
+      </div>
+      <div>
+        <div class="eyebrow">Kit Collection</div>
+        <h1>Marvins <span>Trikot</span>sammlung</h1>
+        <div class="tagline">Lokal gespeichert · verknüpft mit FootballKitArchive</div>
+      </div>
+    </div>
+    <div class="summary" id="summary"></div>
+  </header>
+
+  <div class="controls">
+    <div class="search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input id="search" type="search" placeholder="Verein, Spieler oder Marke suchen…" autocomplete="off">
+    </div>
+    <select id="brandFilter"><option value="">Alle Marken</option></select>
+    <select id="sort">
+      <option value="recent">Zuletzt hinzugefügt</option>
+      <option value="club">Verein A–Z</option>
+      <option value="season-desc">Saison (neueste)</option>
+      <option value="season-asc">Saison (älteste)</option>
+      <option value="brand">Marke A–Z</option>
+    </select>
+    <span class="spacer"></span>
+    <button class="btn ghost" id="importBtn" title="Sammlung aus JSON laden">Import</button>
+    <button class="btn ghost" id="exportBtn" title="Sammlung als JSON sichern">Backup</button>
+    <button class="btn ghost" id="shareBtn" title="HTML-Datei mit Inhalt zum Hochladen erstellen">Teilen</button>
+    <button class="btn primary" id="addBtn">+ Trikot</button>
+    <input type="file" id="importFile" accept="application/json" class="file-hidden">
+  </div>
+
+  <div class="chips" id="typeChips"></div>
+
+  <p class="count-line" id="countLine"></p>
+  <div id="view"></div>
+</div>
+
+<!-- Add/Edit modal -->
+<div class="overlay" id="formOverlay">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h3 id="formTitle">Trikot hinzufügen</h3>
+      <button class="close" data-close-form>&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="findpanel">
+        <div class="findhead"><strong>🔎 Trikot-Bild finden</strong> <span class="hint" style="margin:0">direkt im Archiv</span></div>
+        <p class="hint" style="margin:8px 0 10px">Erst <em>Verein</em> &amp; <em>Saison</em> unten eintragen, dann öffnen. Passendes Trikot gefunden? <strong>Rechtsklick → Bild kopieren</strong>, dann hier irgendwo <strong>Strg + V</strong> – oder Bild speichern und unten hochladen.</p>
+        <div class="find-row">
+          <button type="button" class="btn primary" id="findImgBtn">Auf FootballKitArchive öffnen</button>
+          <button type="button" class="btn" id="findFkaBtn">FKA-Suche (falls nicht gefunden)</button>
+        </div>
+        <div class="db-status" id="pasteStatus"></div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field"><label>Verein / Nationalteam *</label><input id="f-club" placeholder="z. B. Borussia Dortmund"></div>
+        <div class="field"><label>Saison</label><input id="f-season" placeholder="z. B. 2023/24"></div>
+
+        <div class="field"><label>Typ</label>
+          <select id="f-type"><option>Heim</option><option>Auswärts</option><option>Ausweich</option><option>Torwart</option><option>Special</option></select>
+        </div>
+        <div class="field"><label>Marke</label><input id="f-brand" placeholder="z. B. Puma, Nike, adidas" list="brandList"></div>
+
+        <div class="field"><label>Spielername</label><input id="f-player" placeholder="optional"></div>
+        <div class="field"><label>Rückennummer</label><input id="f-number" placeholder="optional" inputmode="numeric"></div>
+
+        <div class="field"><label>Größe</label>
+          <select id="f-size"><option value="">—</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select>
+        </div>
+        <div class="field"><label>Liga / Land</label><input id="f-league" placeholder="optional, z. B. Bundesliga"></div>
+
+        <div class="field"><label>Ausführung</label>
+          <select id="f-auth"><option value="">—</option><option>Replica / Fan</option><option>Authentic</option><option>Player-Issue</option><option>Match-Worn</option></select>
+        </div>
+        <div class="field"><label>Zustand</label>
+          <select id="f-cond"><option value="">—</option><option>Neu mit Etikett</option><option>Neuwertig</option><option>Getragen</option><option>Stark getragen</option></select>
+        </div>
+
+        <div class="field"><label>Gekauft bei</label><input id="f-from" placeholder="optional"></div>
+        <div class="field"><label>Preis</label><input id="f-price" placeholder="optional, z. B. 75 €"></div>
+
+        <div class="field full"><label>FootballKitArchive-Link</label><input id="f-fka" placeholder="https://www.footballkitarchive.com/… (URL des Trikots einfügen)"></div>
+
+        <div class="field full"><label>Notizen</label><textarea id="f-notes" placeholder="Besonderheiten, Patches, Erinnerungen…"></textarea></div>
+
+        <div class="field full">
+          <label>Eigenes Foto (optional)</label>
+          <div class="photo-drop" id="photoDrop">Foto auswählen oder hierher ziehen</div>
+          <input type="file" id="photoInput" accept="image/*" class="file-hidden">
+          <div class="photo-thumb" id="photoThumb" style="display:none;margin-top:10px">
+            <img id="photoPreview" alt="">
+            <button class="btn ghost" type="button" id="photoRemove">Foto entfernen</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn danger" id="formDelete" style="display:none">Löschen</button>
+        <div style="flex:1"></div>
+        <button class="btn ghost" data-close-form>Abbrechen</button>
+        <button class="btn" id="formSaveNext">Speichern &amp; nächstes</button>
+        <button class="btn primary" id="formSave">Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detail modal -->
+<div class="overlay" id="detailOverlay">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="detailTitle">Trikot</h3>
+      <button class="close" data-close-detail>&times;</button>
+    </div>
+    <div class="modal-body" id="detailBody"></div>
+  </div>
+</div>
+
+<datalist id="brandList"></datalist>
+<div class="toast" id="toast"></div>
+
+<script id="embedded-data">window.EMBEDDED_DATA=null;</script>
+<script>
+/* ============================================================
+   Meine Trikotsammlung — eigenständige App, localStorage
+   ============================================================ */
+const STORE_KEY = "trikotsammlung_v1";
+let kits = [];
+let editingId = null;
+let pendingPhoto = null;          // dataURL while editing
+let activeType = "Alle";
+
+/* ---------- Storage ---------- */
+function load(){
+  try{ kits = JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch{ kits = []; }
+  // If this file was "published with content" and the viewer has no own data yet,
+  // show the embedded collection.
+  if((!kits || !kits.length) && Array.isArray(window.EMBEDDED_DATA) && window.EMBEDDED_DATA.length){
+    kits = window.EMBEDDED_DATA.slice();
+  }
+}
+function save(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(kits));
+    return true;
+  }catch(e){
+    alert("Speicher voll. Wahrscheinlich liegt das an zu vielen/zu großen Fotos.\n\nTipp: Sichere deine Sammlung über „Backup“ als JSON-Datei und entferne ein paar Fotos – die generierten Trikot-Grafiken brauchen keinen Speicher.");
+    return false;
+  }
+}
+const STICKY_KEY="trikot_sticky";
+function getSticky(){try{return JSON.parse(localStorage.getItem(STICKY_KEY))||{};}catch{return{};}}
+function setSticky(o){try{localStorage.setItem(STICKY_KEY,JSON.stringify(o));}catch{}}
+let _toastTimer=null;
+function toast(msg){
+  const t=document.getElementById("toast"); if(!t) return;
+  t.textContent=msg; t.classList.add("show");
+  clearTimeout(_toastTimer); _toastTimer=setTimeout(()=>t.classList.remove("show"),1600);
+}
+
+/* ---------- Jersey placeholder graphic (neutral, no customisation) ---------- */
+function jerseySVG(d){
+  d = d || {};
+  const p = "#222734";       // neutral jersey body
+  const s = "#2e3545";       // collar / accent
+  const sl = "#1b202b";      // sleeves
+  const num = (d.number||"").toString().slice(0,2);
+
+  const bodyPath = "M68,46 L132,46 L142,92 L146,205 L54,205 L58,92 Z";
+  const silhouette = "M78,40 C78,33 122,33 122,40 L132,44 L168,58 L176,96 L150,104 L142,92 L146,205 L54,205 L58,92 L50,104 L24,96 L32,58 L68,44 Z";
+  const numEl = num ? `<text x="100" y="150" text-anchor="middle" font-family="Anton, sans-serif" font-size="64" fill="#5a6276" opacity="0.9">${num}</text>` : "";
+
+  return `<svg viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg" role="img">
+    <path d="${silhouette}" fill="${sl}" stroke="#0d1322" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="${bodyPath}" fill="${p}" stroke="#0d1322" stroke-width="2" stroke-linejoin="round"/>
+    <path d="M78,40 C78,33 122,33 122,40 L116,52 C110,56 90,56 84,52 Z" fill="${s}" stroke="#0d1322" stroke-width="2" stroke-linejoin="round"/>
+    ${numEl}
+  </svg>`;
+}
+
+/* ---------- Helpers ---------- */
+function esc(str){return (str==null?"":String(str)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function fkaSearchUrl(club,season){
+  const q = [club,season].filter(Boolean).join(" ");
+  return "https://www.footballkitarchive.com/search/?q="+encodeURIComponent(q);
+}
+function seasonSortKey(s){
+  if(!s) return 0;
+  const m = String(s).match(/\d{4}/);
+  return m ? parseInt(m[0]) : 0;
+}
+
+/* ---------- Render ---------- */
+const TYPES = ["Alle","Heim","Auswärts","Ausweich","Torwart","Special"];
+
+function renderChips(){
+  const el = document.getElementById("typeChips");
+  el.innerHTML = TYPES.map(t=>{
+    const n = t==="Alle" ? kits.length : kits.filter(k=>k.type===t).length;
+    if(t!=="Alle" && n===0) return "";
+    return `<button class="chip ${activeType===t?'active':''}" data-type="${t}">${t} <span style="opacity:.6">${n}</span></button>`;
+  }).join("");
+  el.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{activeType=c.dataset.type;renderChips();render();});
+}
+
+function renderSummary(){
+  const clubs = new Set(kits.map(k=>k.club).filter(Boolean)).size;
+  const brands = new Set(kits.map(k=>k.brand).filter(Boolean)).size;
+  document.getElementById("summary").innerHTML =
+    `<div class="stat"><b>${kits.length}</b><small>Trikots</small></div>
+     <div class="stat"><b>${clubs}</b><small>Vereine</small></div>
+     <div class="stat"><b>${brands}</b><small>Marken</small></div>`;
+}
+
+function renderBrandFilter(){
+  const sel = document.getElementById("brandFilter");
+  const cur = sel.value;
+  const brands = [...new Set(kits.map(k=>k.brand).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Alle Marken</option>'+brands.map(b=>`<option ${b===cur?'selected':''}>${esc(b)}</option>`).join("");
+  document.getElementById("brandList").innerHTML = brands.map(b=>`<option value="${esc(b)}">`).join("");
+}
+
+function currentList(){
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const brand = document.getElementById("brandFilter").value;
+  const sort = document.getElementById("sort").value;
+  let list = kits.filter(k=>{
+    if(activeType!=="Alle" && k.type!==activeType) return false;
+    if(brand && k.brand!==brand) return false;
+    if(q){
+      const hay = [k.club,k.player,k.brand,k.season,k.league].join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  list.sort((a,b)=>{
+    switch(sort){
+      case "club": return (a.club||"").localeCompare(b.club||"");
+      case "brand": return (a.brand||"").localeCompare(b.brand||"");
+      case "season-desc": return seasonSortKey(b.season)-seasonSortKey(a.season);
+      case "season-asc": return seasonSortKey(a.season)-seasonSortKey(b.season);
+      default: return (b.createdAt||0)-(a.createdAt||0);
+    }
+  });
+  return list;
+}
+
+function render(){
+  renderSummary(); renderBrandFilter();
+  const view = document.getElementById("view");
+  const countLine = document.getElementById("countLine");
+
+  if(kits.length===0){
+    countLine.textContent = "";
+    view.innerHTML = `<div class="empty">
+      <div class="crest" style="margin:0 auto;width:64px;height:64px">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2l8.5 3v6c0 5-3.6 8.5-8.5 11C7.1 19.5 3.5 16 3.5 11V5L12 2z" stroke="#241a02" stroke-width="1.4" fill="#241a02" fill-opacity=".15"/><path d="M12 6.4l3.3 2.4-1.25 3.85H9.95L8.7 8.8 12 6.4z" fill="#241a02"/></svg>
+      </div>
+      <h2>Noch keine Trikots</h2>
+      <p>Leg dein erstes Trikot an oder lade ein paar Beispiele, um zu sehen, wie die Sammlung aussieht. Du kannst die Beispiele später einzeln löschen.</p>
+      <button class="btn primary" onclick="openForm()">+ Erstes Trikot</button>
+      <button class="btn ghost" onclick="loadDemo()">Beispiele laden</button>
+    </div>`;
+    return;
+  }
+
+  const list = currentList();
+  countLine.textContent = list.length===kits.length
+    ? `${kits.length} Trikot${kits.length!==1?'s':''}`
+    : `${list.length} von ${kits.length} Trikots`;
+
+  if(list.length===0){
+    view.innerHTML = `<div class="empty"><h2>Nichts gefunden</h2><p>Keine Treffer für die aktuellen Filter. Setz Suche oder Filter zurück.</p></div>`;
+    return;
+  }
+
+  view.innerHTML = `<div class="grid">`+list.map(k=>{
+    const visual = k.photo
+      ? `<img src="${k.photo}" alt="${esc(k.club)}">`
+      : jerseySVG({number:k.number}).replace('<svg','<svg class="kit"');
+    const sub = [k.season, k.size].filter(Boolean).join(" · ");
+    return `<div class="card" data-id="${k.id}">
+      <div class="visual">
+        <span class="typebadge t-${esc(k.type)}">${esc(k.type)}</span>
+        ${visual}
+      </div>
+      <div class="meta">
+        <p class="club">${esc(k.club)||"—"}</p>
+        <div class="sub">${esc(sub)}${k.number?`<span style="color:var(--faint)">#${esc(k.number)}</span>`:""}</div>
+        ${k.brand?`<div class="brandtag">${esc(k.brand)}</div>`:""}
+      </div>
+    </div>`;
+  }).join("")+`</div>`;
+
+  view.querySelectorAll(".card").forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+}
+
+/* ---------- Detail ---------- */
+function openDetail(id){
+  const k = kits.find(x=>x.id===id); if(!k) return;
+  document.getElementById("detailTitle").textContent = (k.club||"Trikot")+(k.season?` · ${k.season}`:"");
+  const visual = k.photo ? `<img src="${k.photo}" alt="">` : jerseySVG({number:k.number});
+  const rows = [
+    ["Typ", k.type],
+    ["Saison", k.season],
+    ["Marke", k.brand],
+    ["Spieler", k.player ? `${k.player}${k.number?` (#${k.number})`:""}` : (k.number?`#${k.number}`:"")],
+    ["Größe", k.size],
+    ["Liga / Land", k.league],
+    ["Ausführung", k.auth],
+    ["Zustand", k.cond],
+    ["Gekauft bei", k.from],
+    ["Preis", k.price],
+  ].filter(r=>r[1]);
+
+  const fka = k.fka
+    ? `<a class="fka-link" href="${esc(k.fka)}" target="_blank" rel="noopener">Trikot auf FootballKitArchive ansehen ↗</a>`
+    : `<a class="fka-link" href="${fkaSearchUrl(k.club,k.season)}" target="_blank" rel="noopener">Auf FootballKitArchive suchen ↗</a>`;
+
+  document.getElementById("detailBody").innerHTML = `
+    <div class="detail">
+      <div class="bigvisual">${visual}</div>
+      <div>
+        <dl>${rows.map(r=>`<dt>${esc(r[0])}</dt><dd>${esc(r[1])}</dd>`).join("")}</dl>
+        ${k.notes?`<div class="notes">${esc(k.notes)}</div>`:""}
+        <div style="margin-top:16px">${fka}</div>
+        <div class="detail-actions">
+          <button class="btn" onclick="openForm('${k.id}')">Bearbeiten</button>
+          <button class="btn danger" onclick="deleteKit('${k.id}')">Löschen</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById("detailOverlay").classList.add("open");
+}
+
+/* ---------- Form ---------- */
+function openForm(id){
+  editingId = id || null;
+  pendingPhoto = null;
+  const ps=document.getElementById("pasteStatus"); if(ps){ps.textContent="";ps.className="db-status";}
+  const f = id ? kits.find(k=>k.id===id) : null;
+  const sd = id ? {} : getSticky();   // carry brand/size/type to the next new entry
+  document.getElementById("formTitle").textContent = f ? "Trikot bearbeiten" : "Trikot hinzufügen";
+  document.getElementById("formDelete").style.display = f ? "inline-block" : "none";
+
+  setVal("f-club", f?.club); setVal("f-season", f?.season);
+  setVal("f-type", f?.type || sd.type || "Heim"); setVal("f-brand", f?.brand ?? sd.brand);
+  setVal("f-player", f?.player); setVal("f-number", f?.number);
+  setVal("f-size", f?.size || sd.size || ""); setVal("f-league", f?.league);
+  setVal("f-auth", f?.auth||""); setVal("f-cond", f?.cond||"");
+  setVal("f-from", f?.from); setVal("f-price", f?.price);
+  setVal("f-fka", f?.fka); setVal("f-notes", f?.notes);
+
+  pendingPhoto = f?.photo || null;
+  updatePhotoThumb();
+  document.getElementById("formOverlay").classList.add("open");
+  document.getElementById("f-club").focus();
+}
+function setVal(id,v){document.getElementById(id).value = v==null?"":v;}
+function getVal(id){return document.getElementById(id).value.trim();}
+
+function saveForm(keepOpen){
+  const club = getVal("f-club");
+  if(!club){ alert("Bitte mindestens den Verein angeben."); document.getElementById("f-club").focus(); return; }
+  const wasNew = !editingId;
+  const rec = {
+    id: editingId || ("k"+Date.now()+Math.random().toString(36).slice(2,6)),
+    club, season:getVal("f-season"), type:getVal("f-type"), brand:getVal("f-brand"),
+    player:getVal("f-player"), number:getVal("f-number"), size:getVal("f-size"),
+    league:getVal("f-league"), auth:getVal("f-auth"), cond:getVal("f-cond"),
+    from:getVal("f-from"), price:getVal("f-price"), fka:getVal("f-fka"), notes:getVal("f-notes"),
+    photo: pendingPhoto || null,
+    createdAt: editingId ? (kits.find(k=>k.id===editingId)?.createdAt||Date.now()) : Date.now()
+  };
+  if(editingId){
+    const i = kits.findIndex(k=>k.id===editingId); kits[i]=rec;
+  }else{ kits.unshift(rec); }
+  if(!save()) return;
+  setSticky({brand:rec.brand, size:rec.size, type:rec.type});
+  render();
+  toast("✓ Gespeichert");
+  if(keepOpen && wasNew){ resetFormForNext(); }
+  else { closeForm(); }
+}
+
+function resetFormForNext(){
+  // keep brand/size/type (sticky), clear the rest, ready for the next jersey
+  editingId=null; pendingPhoto=null;
+  ["f-club","f-season","f-player","f-number","f-league","f-from","f-price","f-fka","f-notes"].forEach(id=>setVal(id,""));
+  setVal("f-auth",""); setVal("f-cond","");
+  const sd=getSticky();
+  setVal("f-brand", sd.brand||""); setVal("f-size", sd.size||""); setVal("f-type", sd.type||"Heim");
+  const ps=document.getElementById("pasteStatus"); if(ps){ps.textContent="";ps.className="db-status";}
+  updatePhotoThumb();
+  document.getElementById("formOverlay").scrollTop=0;
+  document.getElementById("f-club").focus();
+}
+
+function deleteKit(id){
+  if(!confirm("Dieses Trikot wirklich löschen?")) return;
+  kits = kits.filter(k=>k.id!==id);
+  save(); closeForm(); closeDetail(); render();
+}
+function closeForm(){document.getElementById("formOverlay").classList.remove("open");editingId=null;pendingPhoto=null;}
+function closeDetail(){document.getElementById("detailOverlay").classList.remove("open");}
+
+/* ---------- Photo handling (downscaled) ---------- */
+function handlePhotoFile(file){
+  if(!file || !file.type.startsWith("image/")) return;
+  const reader = new FileReader();
+  reader.onload = e=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const max=420, scale=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.round(img.width*scale), h=Math.round(img.height*scale);
+      const cv=document.createElement("canvas"); cv.width=w; cv.height=h;
+      cv.getContext("2d").drawImage(img,0,0,w,h);
+      pendingPhoto = cv.toDataURL("image/jpeg",0.74);
+      updatePhotoThumb();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function updatePhotoThumb(){
+  const thumb=document.getElementById("photoThumb");
+  if(pendingPhoto){ thumb.style.display="flex"; document.getElementById("photoPreview").src=pendingPhoto; }
+  else thumb.style.display="none";
+}
+
+/* ---------- Export / Import ---------- */
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(kits,null,2)],{type:"application/json"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="trikotsammlung-"+new Date().toISOString().slice(0,10)+".json";
+  a.click(); URL.revokeObjectURL(a.href);
+}
+function importJSON(file){
+  const r=new FileReader();
+  r.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data)) throw 0;
+      const mode = kits.length ? (confirm("Vorhandene Sammlung ERSETZEN?\n\nOK = ersetzen · Abbrechen = hinzufügen") ? "replace":"merge") : "replace";
+      if(mode==="replace") kits=data;
+      else{ const ids=new Set(kits.map(k=>k.id)); data.forEach(k=>{if(!ids.has(k.id)) kits.push(k);}); }
+      save(); render();
+      alert("Import erfolgreich: "+data.length+" Trikots geladen.");
+    }catch{ alert("Diese Datei konnte nicht gelesen werden. Bitte eine JSON-Sicherung dieser App verwenden."); }
+  };
+  r.readAsText(file);
+}
+
+/* ---------- Publish: self-contained HTML with data baked in ---------- */
+function publishWithContent(){
+  if(!kits.length){ alert("Es sind noch keine Trikots da, die du teilen könntest."); return; }
+  const sizeMB = (JSON.stringify(kits).length/1048576);
+  if(sizeMB>8 && !confirm("Die Datei wird ca. "+sizeMB.toFixed(1)+" MB groß (viele Fotos). Trotzdem erstellen?")) return;
+
+  const dataScript=document.getElementById("embedded-data");
+  const prevData=dataScript.textContent;
+  const search=document.getElementById("search");
+  const brandFilter=document.getElementById("brandFilter");
+  const prevSearch=search.value, prevSort=document.getElementById("sort").value;
+
+  // 1) bake the current collection into the embedded-data script
+  dataScript.textContent="window.EMBEDDED_DATA="+JSON.stringify(kits)+";";
+  // 2) blank out the dynamically rendered parts so the saved shell is clean
+  ["view","summary","typeChips","countLine"].forEach(id=>document.getElementById(id).innerHTML="");
+  document.getElementById("countLine").textContent="";
+  search.value=""; search.setAttribute("value","");
+  brandFilter.innerHTML='<option value="">Alle Marken</option>';
+  document.querySelectorAll(".overlay").forEach(o=>o.classList.remove("open"));
+  const t=document.getElementById("toast"); t.classList.remove("show"); const tText=t.textContent; t.textContent="";
+
+  // 3) serialize the whole document
+  const html="<!DOCTYPE html>\n"+document.documentElement.outerHTML;
+
+  // 4) restore the live working app
+  dataScript.textContent=prevData;
+  t.textContent=tText;
+  search.removeAttribute("value");
+  render();
+  search.value=prevSearch; document.getElementById("sort").value=prevSort;
+
+  // 5) download
+  const blob=new Blob([html],{type:"text/html"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="index.html"; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  toast("✓ Teil-Datei „index.html“ erstellt");
+}
+
+/* ---------- Demo ---------- */
+function loadDemo(){
+  kits = [
+    {id:"d1",club:"Borussia Dortmund",season:"2012/13",type:"Heim",brand:"Puma",player:"Reus",number:"11",size:"L",league:"Bundesliga",auth:"Replica / Fan",cond:"Neuwertig",notes:"Finale-Saison Wembley.",createdAt:Date.now()-3000},
+    {id:"d2",club:"FC Barcelona",season:"2010/11",type:"Heim",brand:"Nike",player:"Messi",number:"10",size:"M",league:"La Liga",auth:"Authentic",cond:"Getragen",createdAt:Date.now()-2000},
+    {id:"d3",club:"Italien",season:"2006",type:"Auswärts",brand:"Puma",size:"L",league:"WM",auth:"Replica / Fan",notes:"Weltmeister-Edition.",createdAt:Date.now()-1000},
+    {id:"d4",club:"Celtic FC",season:"2019/20",type:"Heim",brand:"adidas",size:"M",league:"Scottish Premiership",createdAt:Date.now()-500}
+  ];
+  save(); render();
+}
+
+/* ---------- Manual image search + clipboard paste ---------- */
+function fkaSlug(name){
+  return (name||"").toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")  // ä→a, ö→o, ü→u, é→e …
+    .replace(/ß/g,"ss").replace(/&/g," and ")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+}
+function fkaSeason(s){
+  s=(s||"").trim();
+  let m=s.match(/^(\d{4})\s*[\/\-]\s*(\d{2,4})$/);
+  if(m){ const yr2=m[2].length===4?m[2].slice(2):m[2]; return m[1]+"-"+yr2; }
+  if(/^\d{4}$/.test(s)) return s;          // single-year (z. B. WM 2006)
+  return "";
+}
+function openFkaDirect(){
+  const club=getVal("f-club");
+  if(!club){ alert("Bitte zuerst den Verein (und am besten die Saison) eintragen."); document.getElementById("f-club").focus(); return; }
+  const slug=fkaSlug(club), seas=fkaSeason(getVal("f-season"));
+  const url = seas
+    ? `https://www.footballkitarchive.com/${slug}-${seas}-kits/`
+    : `https://www.footballkitarchive.com/${slug}-kits/`;
+  window.open(url, "_blank", "noopener");
+  const ps=document.getElementById("pasteStatus");
+  ps.textContent="Passendes Trikot gefunden? Rechtsklick → „Bild kopieren“, dann hier Strg + V. Landest du auf einer Fehlerseite, nutze die FKA-Suche."; ps.className="db-status";
+}
+function findFka(){
+  const club=getVal("f-club");
+  if(!club){ alert("Bitte zuerst den Verein eintragen."); document.getElementById("f-club").focus(); return; }
+  window.open(fkaSearchUrl(club, getVal("f-season")), "_blank", "noopener");
+}
+function handlePaste(e){
+  if(!document.getElementById("formOverlay").classList.contains("open")) return;
+  const items = ((e.clipboardData||window.clipboardData)||{}).items || [];
+  for(const it of items){
+    if(it.type && it.type.startsWith("image/")){
+      const blob = it.getAsFile();
+      if(blob){
+        handlePhotoFile(blob);
+        const ps=document.getElementById("pasteStatus");
+        ps.textContent="✓ Bild eingefügt und übernommen."; ps.className="db-status";
+        toast("✓ Bild eingefügt");
+        e.preventDefault();
+      }
+      return;
+    }
+  }
+}
+
+document.getElementById("addBtn").onclick=()=>openForm();
+document.getElementById("formSave").onclick=()=>saveForm(false);
+document.getElementById("formSaveNext").onclick=()=>saveForm(true);
+document.getElementById("findImgBtn").onclick=openFkaDirect;
+document.getElementById("findFkaBtn").onclick=findFka;
+document.addEventListener("paste",handlePaste);
+document.getElementById("formDelete").onclick=()=>deleteKit(editingId);
+document.getElementById("exportBtn").onclick=exportJSON;
+document.getElementById("shareBtn").onclick=publishWithContent;
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=e=>{if(e.target.files[0])importJSON(e.target.files[0]);e.target.value="";};
+document.querySelectorAll("[data-close-form]").forEach(b=>b.onclick=closeForm);
+document.querySelectorAll("[data-close-detail]").forEach(b=>b.onclick=closeDetail);
+document.getElementById("search").oninput=render;
+document.getElementById("brandFilter").onchange=render;
+document.getElementById("sort").onchange=render;
+
+document.getElementById("photoDrop").onclick=()=>document.getElementById("photoInput").click();
+document.getElementById("photoInput").onchange=e=>{if(e.target.files[0])handlePhotoFile(e.target.files[0]);};
+document.getElementById("photoRemove").onclick=()=>{pendingPhoto=null;updatePhotoThumb();};
+const drop=document.getElementById("photoDrop");
+drop.addEventListener("dragover",e=>{e.preventDefault();drop.style.borderColor="var(--pitch)";});
+drop.addEventListener("dragleave",()=>drop.style.borderColor="");
+drop.addEventListener("drop",e=>{e.preventDefault();drop.style.borderColor="";if(e.dataTransfer.files[0])handlePhotoFile(e.dataTransfer.files[0]);});
+
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.classList.remove("open");}));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeForm();closeDetail();}});
+
+/* ---------- Init ---------- */
+load(); renderChips(); render();
+</script>
+</body>
+</html>
